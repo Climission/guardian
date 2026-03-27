@@ -1,6 +1,7 @@
 import { IPFSService } from "src/app/services/ipfs.service";
 import { firstValueFrom } from 'rxjs';
 import { fileTypeFromBuffer } from 'file-type';
+import CID from "cids";
 
 interface DocumentData {
     document: any;
@@ -90,15 +91,26 @@ export class IpfsTransformationUIAddonCode {
         if (!match) {
             return ipfsString;
         }
-        
         const cid = match[1];
+        let cidV1 = cid;
         
-        if (this.transformationType === TransformationIpfsLinkType.IpfsGateway) {
-            return this.convertToIpfsGateway(cid);
-        } else if (this.transformationType === TransformationIpfsLinkType.Base64) {
-            return await this.convertToBase64({ fullMatch: ipfsString, cid });
+        if(!!!this.dryRun) {
+            cidV1 = new CID(cid).toV1().toString('base32');
         }
-        
+
+        if (
+            this.transformationType === TransformationIpfsLinkType.IpfsGateway
+        ) {
+            return this.convertToIpfsGateway(cidV1);
+        } else if (
+            this.transformationType === TransformationIpfsLinkType.Base64
+        ) {
+            return await this.convertToBase64({
+                fullMatch: ipfsString,
+                cid: cidV1,
+            });
+        }
+
         return ipfsString;
     }
 
