@@ -1,0 +1,915 @@
+/*
+ * Guardian admin patterns — reusable token-driven layout primitives for
+ * admin surfaces: page hero, stats grid, cards, badges, filter rows,
+ * stages with stagger animations, user picker dialog, scroll-hint.
+ *
+ * All classes opt-in by tagging the host element. Existing pages are
+ * untouched until they adopt these classes; the patterns are additive.
+ * Reach for these first when building a new admin screen; add new
+ * classes here when a pattern is needed in more than one place.
+ */
+
+/* ──────────────────── Page hero ──────────────────── */
+.guardian-page-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--guardian-space-8);
+    /*
+     * QA tightened spacing twice. Originally: margin-bottom 40px +
+     * padding-bottom 24px = 64px of dead air below every hero. We trimmed
+     * it to a single 24px, then dropped it entirely after Volod's review:
+     * .guardian-stats has its own margin-top (--guardian-space-8 ≈ 32px)
+     * so when a stats grid follows the hero, spacing is still 32px — clean
+     * without compounding margins. Pages without a stats grid simply use
+     * the next element's own top margin.
+     */
+    margin-bottom: 0;
+    padding: 0;
+
+    &__body {
+        min-width: 0;
+    }
+
+    &__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: var(--guardian-font-size-xs);
+        font-weight: var(--guardian-weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: var(--guardian-tracking-label);
+        color: var(--color-primary);
+        margin-bottom: var(--guardian-space-5);
+        animation: guardian-rise 520ms var(--guardian-ease-premium) both;
+        animation-delay: 0ms;
+    }
+
+    &__title {
+        font-family: var(--guardian-font-sans);
+        font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+        font-weight: var(--guardian-weight-bold);
+        letter-spacing: -0.045em;
+        line-height: 1.02;
+        margin: 0 0 var(--guardian-space-4) 0;
+        color: var(--guardian-text);
+        animation: guardian-rise 560ms var(--guardian-ease-premium) both;
+        animation-delay: 60ms;
+    }
+
+    &__title--accent {
+        background: linear-gradient(
+            135deg,
+            #1a1a1a 0%,
+            #0d7a5f 55%,
+            #1a9a7a 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    &__subtitle {
+        font-size: var(--guardian-font-size-md);
+        font-weight: var(--guardian-weight-light);
+        color: var(--guardian-text-secondary);
+        line-height: 1.6;
+        /*
+         * Was 640px which left a purple "dead zone" on the right of narrower
+         * heroes (QA flagged via element inspector). 760px stays within
+         * comfortable reading-line length while letting subtitle text reach
+         * closer to the column's right edge on most viewports.
+         */
+        max-width: 760px;
+        margin: 0;
+        animation: guardian-rise 600ms var(--guardian-ease-premium) both;
+        animation-delay: 120ms;
+    }
+
+    &__actions {
+        display: flex;
+        gap: var(--guardian-space-2);
+        flex-shrink: 0;
+        animation: guardian-rise 600ms var(--guardian-ease-premium) both;
+        animation-delay: 180ms;
+    }
+}
+
+/* ──────────────────── Stat chips grid ──────────────────── */
+.guardian-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--guardian-space-5);
+    margin-top: var(--guardian-space-8);
+    margin-bottom: var(--guardian-space-10);
+
+    @media (max-width: 960px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* stagger entries for Linear/Stripe feel */
+    & > * {
+        animation: guardian-rise 560ms var(--guardian-ease-premium) both;
+    }
+    & > *:nth-child(1) {
+        animation-delay: 80ms;
+    }
+    & > *:nth-child(2) {
+        animation-delay: 140ms;
+    }
+    & > *:nth-child(3) {
+        animation-delay: 200ms;
+    }
+    & > *:nth-child(4) {
+        animation-delay: 260ms;
+    }
+}
+
+.guardian-stat {
+    position: relative;
+    background: var(--guardian-surface);
+    border: 1px solid var(--guardian-border);
+    border-radius: var(--guardian-radius-lg);
+    padding: var(--guardian-space-6);
+    box-shadow: 0 1px 2px rgba(23, 23, 23, 0.03);
+    transition: box-shadow 360ms var(--guardian-ease-smooth),
+        transform 360ms var(--guardian-ease-smooth),
+        border-color 360ms var(--guardian-ease-smooth);
+    overflow: hidden;
+    cursor: default;
+    min-width: 0;
+
+    &:hover {
+        box-shadow: 0 2px 4px rgba(23, 23, 23, 0.04),
+            0 12px 32px rgba(23, 23, 23, 0.06);
+        transform: translateY(-3px);
+        border-color: var(--guardian-border-strong);
+    }
+
+    &__label {
+        font-size: var(--guardian-font-size-xs);
+        font-weight: var(--guardian-weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: var(--guardian-tracking-label);
+        color: var(--guardian-text-muted);
+        margin-bottom: var(--guardian-space-4);
+    }
+
+    &__value {
+        font-family: var(--guardian-font-sans);
+        font-size: 38px;
+        font-weight: var(--guardian-weight-bold);
+        letter-spacing: -0.04em;
+        line-height: 1.05;
+        color: var(--guardian-text);
+        font-variant-numeric: tabular-nums;
+        /* Long string values (like "AccountCreateTransaction") would
+           otherwise overflow the card. Clip with ellipsis. */
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Smaller-text variant for non-numeric values (category names, etc.).
+       Auto-shrinks the value font-size and removes the bold-display feel. */
+    &__value--sm {
+        font-size: 18px;
+        font-weight: var(--guardian-weight-semibold);
+        letter-spacing: -0.01em;
+    }
+
+    &__delta {
+        margin-top: var(--guardian-space-2);
+        font-size: var(--guardian-font-size-xs);
+        font-weight: var(--guardian-weight-medium);
+        color: var(--guardian-success);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &.down {
+            color: var(--guardian-error);
+        }
+    }
+
+    /* Accent — gradient text only. No glowing edges, no gradient borders. */
+    &--accent {
+        .guardian-stat__value {
+            //background: var(--guardian-text-gradient);
+            background-color: var(--color-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+    }
+}
+
+/* ──────────────────── Generic content card ──────────────────── */
+.guardian-card {
+    background: var(--guardian-surface);
+    border: 1px solid var(--guardian-border);
+    border-radius: var(--guardian-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(23, 23, 23, 0.03);
+
+    &--pad {
+        padding: var(--guardian-space-6);
+    }
+
+    &__header {
+        padding: var(--guardian-space-5) var(--guardian-space-6);
+        border-bottom: 1px solid var(--guardian-border);
+
+        h3 {
+            margin: 0;
+            font-size: var(--guardian-font-size-md);
+            font-weight: var(--guardian-weight-semibold);
+            letter-spacing: -0.015em;
+        }
+
+        p {
+            margin: 4px 0 0 0;
+            font-size: var(--guardian-font-size-sm);
+            font-weight: var(--guardian-weight-light);
+            color: var(--guardian-text-muted);
+            line-height: 1.55;
+        }
+    }
+}
+
+/* ──────────────────── Status badges (dot + pill) ──────────────────── */
+.guardian-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: var(--guardian-radius-full);
+    font-size: var(--guardian-font-size-xs);
+    font-weight: var(--guardian-weight-medium);
+    white-space: nowrap;
+    line-height: 1.4;
+
+    &::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: var(--guardian-radius-full);
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    &--ok {
+        background: var(--guardian-success-bg);
+        color: var(--guardian-success-fg);
+    }
+
+    &--warn {
+        background: var(--guardian-warn-bg);
+        color: var(--guardian-warn-fg);
+    }
+
+    &--err {
+        background: var(--guardian-error-bg);
+        color: var(--guardian-error-fg);
+    }
+
+    &--info {
+        background: var(--guardian-info-bg);
+        color: var(--guardian-info-fg);
+    }
+
+    &--muted {
+        background: var(--guardian-muted);
+        color: var(--guardian-text-muted);
+    }
+
+    &--huge{
+        height: 40px;
+        padding: 16px 24px;
+    }
+}
+
+/* ──────────────────── Guardian scrollbars ──────────────────── */
+/*
+ * Tightened, brand-tinted scrollbars across the app. Body and any inner
+ * scroll container (tables, tab panels) get the same look so the chrome
+ * never feels Mac-default-gray.
+ */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--guardian-border-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.2s var(--guardian-ease-smooth);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--guardian-text-muted);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--guardian-border-strong) transparent;
+}
+
+/*
+ * Guardian table scroll-shadow pattern.
+ *
+ * Tables inside .guardian-card scroll horizontally when their columns
+ * overflow. Two CSS tricks combine so the scrollability is *visible* even
+ * before the user touches the scrollbar:
+ *
+ *  1. Two solid-colour gradients pinned with background-attachment: local.
+ *     They sit at the inner edges (left and right) of the scroll content
+ *     and travel WITH the content. When the content has been scrolled all
+ *     the way to one side, only that side's solid gradient is visible.
+ *
+ *  2. Two short shadow gradients at the same edges with
+ *     background-attachment: scroll. They sit *over* the visible portion
+ *     of the wrapper. They're only revealed when there is content to
+ *     scroll past, because the local gradient otherwise sits on top of them.
+ *
+ * Net result: a soft accent shadow appears on the right edge of the table
+ * while there is still content to scroll into view. As the user scrolls,
+ * the shadow flips sides, signalling "more this way." No JS required.
+ */
+.guardian-card {
+    .p-datatable-wrapper,
+    .p-datatable-scrollable-wrapper {
+        position: relative;
+        overflow-x: auto;
+        border-radius: inherit;
+
+        /* Solid covers (in card surface colour) + accent shadows. */
+        background:
+            /* left cover (card surface) — moves WITH content */ linear-gradient(
+                    to right,
+                    var(--guardian-surface) 30%,
+                    rgba(255, 255, 255, 0)
+                )
+                left center / 12px 100% no-repeat local,
+            /* right cover (card surface) — moves WITH content */
+                linear-gradient(
+                    to left,
+                    var(--guardian-surface) 30%,
+                    rgba(255, 255, 255, 0)
+                )
+                right center / 12px 100% no-repeat local,
+            /* left scroll-shadow (accent), pinned to viewport */
+                radial-gradient(
+                    farthest-side at 0% 50%,
+                    rgba(13, 61, 48, 0.12),
+                    rgba(0, 0, 0, 0)
+                )
+                left center / 18px 100% no-repeat scroll,
+            /* right scroll-shadow (accent), pinned to viewport */
+                radial-gradient(
+                    farthest-side at 100% 50%,
+                    rgba(13, 61, 48, 0.12),
+                    rgba(0, 0, 0, 0)
+                )
+                right center / 18px 100% no-repeat scroll;
+    }
+}
+
+/*
+ * One-shot "scroll to see more" hint that fades out after the user
+ * interacts. Apply to a .scroll-hint span inside or near a scrollable
+ * card. Auto-hides after 6s; also hides on first hover/scroll via JS
+ * if needed.
+ */
+.guardian-scroll-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--guardian-font-size-xs);
+    font-weight: var(--guardian-weight-medium);
+    color: var(--guardian-text-muted);
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    background: var(--guardian-muted);
+    border-radius: var(--guardian-radius-full);
+    animation: guardian-scroll-hint-pulse 2.4s ease-in-out infinite;
+
+    &::after {
+        content: "→";
+        font-weight: var(--guardian-weight-bold);
+        animation: guardian-scroll-hint-arrow 2.4s ease-in-out infinite;
+    }
+}
+
+@keyframes guardian-scroll-hint-pulse {
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes guardian-scroll-hint-arrow {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(3px);
+    }
+}
+
+/* ──────────────────── User picker — Guardian admin pattern ──────────────────── */
+/*
+ * Reusable Guardian picker pattern. Use it for any "select one item from
+ * a small list" dialog (account switching, tenant selection, role picking,
+ * etc.). Pattern carried over from the AI toolkit SsoPage but dressed in
+ * the Guardian light palette so it sits with the rest of the admin chrome.
+ *
+ * Usage:
+ *   <p-dialog
+ *     styleClass="guardian-p-dialog guardian-p-dialog-lite guardian-user-picker"
+ *     header="Select Account">
+ *
+ *     <some-content class="guardian-user-picker__list"> ... </some-content>
+ *
+ *     <button pButton class="guardian-user-picker__more">More Details</button>
+ *   </p-dialog>
+ *
+ * Item rows inside the list should have a .user (or .item) class with a
+ * .selected modifier when active; this rule set styles those automatically.
+ *
+ * Scoped via the .guardian-user-picker class so other PrimeNG dialogs
+ * keep their default light card styling.
+ */
+.p-dialog.guardian-user-picker.guardian-p-dialog {
+    background: var(--guardian-surface) !important;
+    border: 1px solid var(--guardian-border);
+    border-radius: var(--guardian-radius-xl);
+    padding: 24px !important;
+    box-shadow: var(--guardian-shadow-lg);
+    gap: 8px;
+
+    .p-dialog-header {
+        background: transparent !important;
+        padding: 0 !important;
+        border: none;
+        margin-bottom: 0px;
+
+        .p-dialog-title {
+            font-family: var(--guardian-font-sans);
+            font-size: var(--guardian-font-size-lg);
+            font-weight: var(--guardian-weight-semibold);
+            color: var(--guardian-text);
+            letter-spacing: -0.015em;
+        }
+
+        .p-dialog-header-icons .p-dialog-header-icon {
+            color: var(--guardian-text-muted);
+            transition: color 0.2s var(--guardian-ease-smooth);
+            &:hover {
+                color: var(--guardian-text);
+                background: transparent;
+            }
+        }
+    }
+
+    .p-dialog-content {
+        background: transparent !important;
+        padding: 0 !important;
+        /* Make the content area a flex column so the tenant list can scroll
+           while the "More Details" pill stays pinned at the bottom. */
+        display: flex !important;
+        flex-direction: column;
+        max-height: 70vh;
+        overflow: hidden;
+    }
+
+    /* Item rows rendered by guardian-user-selector-min-component */
+    .guardian-user-picker__list {
+        display: block;
+        font-family: var(--guardian-font-sans);
+        /* List grows to fill available space and scrolls internally. */
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 4px;
+        margin-right: -4px;
+
+        .tenant-list {
+            gap: 10px;
+        }
+
+        .tenant-header {
+            color: var(--guardian-text-muted) !important;
+            margin-bottom: 6px;
+
+            .tenant-name {
+                color: var(--guardian-text) !important;
+                font-weight: var(--guardian-weight-semibold);
+                font-size: var(--guardian-font-size-base);
+                letter-spacing: -0.01em;
+            }
+            .tenant-network {
+                color: var(--guardian-text-muted) !important;
+            }
+            .tenant-network::before {
+                border-color: var(--guardian-border) !important;
+            }
+        }
+
+        .user {
+            color: var(--guardian-text-secondary) !important;
+            background: var(--guardian-surface);
+            border: 1px solid var(--guardian-border);
+            border-radius: var(--guardian-radius-lg);
+            transition: transform 0.2s var(--guardian-ease-smooth),
+                border-color 0.2s var(--guardian-ease-smooth),
+                background-color 0.2s var(--guardian-ease-smooth),
+                box-shadow 0.2s var(--guardian-ease-smooth);
+
+            &:hover {
+                transform: translateY(-1px);
+                border-color: var(--color-primary);
+                background: var(--guardian-surface);
+                box-shadow: 0 4px 14px rgba(26, 154, 122, 0.12);
+                &::after {
+                    display: none !important;
+                }
+            }
+
+            &.selected {
+                border-color: var(--color-primary);
+                background: color-mix(in srgb, var(--color-primary) 20%, #0000 80%);
+                &::after {
+                    display: none !important;
+                }
+            }
+
+            .mark-selected {
+                color: color-mix(in srgb, var(--color-primary) 80%, #000 20%) !important;
+            }
+
+            .user-icon {
+                background: var(--guardian-muted) !important;
+                border-color: var(--guardian-border) !important;
+                color: var(--guardian-text-secondary);
+            }
+
+            .user-name {
+                color: var(--guardian-text) !important;
+                font-weight: var(--guardian-weight-semibold);
+            }
+            .user-text {
+                color: var(--guardian-text-muted) !important;
+            }
+            .user-account {
+                color: var(--guardian-text-muted) !important;
+            }
+        }
+    }
+
+    /* "More Details" button — pill in Guardian gradient.
+       flex-shrink: 0 keeps the button at full size even when the list above
+       overflows; the list takes the scroll. */
+    .guardian-user-picker__more {
+        width: 100%;
+        height: auto;
+        flex-shrink: 0;
+        margin-top: 16px;
+        padding: 12px 22px;
+        font-family: var(--guardian-font-sans);
+        font-size: var(--guardian-font-size-xs);
+        font-weight: var(--guardian-weight-semibold);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--guardian-surface);
+        background: var(--primary-color) !important;
+        border: none;
+        border-radius: var(--guardian-radius-full);
+        cursor: pointer;
+        transition: box-shadow 0.2s var(--guardian-ease-smooth),
+            transform 0.2s var(--guardian-ease-smooth);
+
+        &:hover {
+            box-shadow: 0 6px 18px rgba(26, 154, 122, 0.28);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+/* Soft frosted backdrop behind the picker. */
+.p-dialog-mask:has(.guardian-user-picker) {
+    background: rgba(20, 30, 26, 0.18) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/*
+ * Full-size variant of the picker, opened via DialogService.open() at login
+ * time and from the sidebar's "More Details" button. Same brand language
+ * as the small picker, just sized for the larger DynamicDialog surface.
+ */
+.p-dialog.guardian-user-picker--full.guardian-p-dialog {
+    /* Scroll the body cleanly when many tenants are present. Cap at 70vh so
+       the dialog doesn't push past the viewport on small screens, and let
+       overflow-y handle the overflow naturally. */
+    .p-dialog-content {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .p-dialog-content app-user-selector-dialog {
+        display: block;
+        font-family: var(--guardian-font-sans);
+        color: var(--guardian-text);
+
+        .title {
+            /* Drop the component's default position:sticky here — it caused
+               the intro paragraph to pin at the top and overlap the first
+               tenant row as the body scrolled. The intro is short; better
+               to let it scroll away with the content. */
+            position: static !important;
+            top: auto !important;
+            z-index: auto !important;
+            background: transparent !important;
+            color: var(--guardian-text-muted) !important;
+            font-size: var(--guardian-font-size-sm);
+            font-weight: var(--guardian-weight-light);
+            line-height: 1.55;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--guardian-border);
+            margin-bottom: 8px;
+
+            a {
+                color: var(--color-primary) !important;
+                font-weight: var(--guardian-weight-medium);
+                text-decoration: none;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .tenant-list {
+            gap: 18px;
+        }
+
+        .tenant {
+            &::after {
+                border-bottom-color: var(--guardian-border) !important;
+            }
+
+            .tenant-header {
+                color: var(--guardian-text-secondary) !important;
+
+                .tenant-name {
+                    color: var(--guardian-text) !important;
+                    font-weight: var(--guardian-weight-semibold);
+                    letter-spacing: -0.01em;
+                }
+                .tenant-network {
+                    color: var(--guardian-text-muted) !important;
+                    text-transform: uppercase;
+                    font-size: var(--guardian-font-size-xs);
+                    letter-spacing: var(--guardian-tracking-label);
+                }
+                .tenant-id {
+                    color: var(--guardian-text-muted) !important;
+                    font-family: var(--guardian-font-mono);
+                    font-size: var(--guardian-font-size-sm);
+                    &::before {
+                        border-color: var(--guardian-border) !important;
+                    }
+                }
+                .pi-copy {
+                    color: var(--guardian-text-muted);
+                }
+                .pi-copy:hover {
+                    color: var(--color-primary);
+                }
+
+                .badge {
+                    background: var(--guardian-muted) !important;
+                    color: var(--guardian-text-secondary) !important;
+                    font-size: var(--guardian-font-size-sm);
+                    font-weight: var(--guardian-weight-semibold);
+                }
+            }
+
+            .user {
+                background: var(--guardian-surface);
+                border: 1px solid var(--guardian-border) !important;
+                border-radius: var(--guardian-radius-lg);
+                color: var(--guardian-text-secondary) !important;
+                transition: transform 0.2s var(--guardian-ease-smooth),
+                    border-color 0.2s var(--guardian-ease-smooth),
+                    box-shadow 0.2s var(--guardian-ease-smooth);
+
+                &:hover {
+                    transform: translateY(-1px);
+                    border-color: var(--color-primary) !important;
+                    box-shadow: 0 4px 14px rgba(26, 154, 122, 0.12);
+                    &::after {
+                        display: none !important;
+                    }
+                }
+
+                .user-icon {
+                    background: var(--guardian-muted) !important;
+                    border-color: var(--guardian-border) !important;
+                    color: var(--guardian-text-secondary);
+                }
+
+                .user-name {
+                    color: var(--guardian-text) !important;
+                    font-weight: var(--guardian-weight-semibold);
+                }
+                .user-account {
+                    color: var(--guardian-text-muted) !important;
+                    font-family: var(--guardian-font-mono);
+                    font-size: var(--guardian-font-size-sm);
+                }
+                .user-text {
+                    color: var(--guardian-text-muted) !important;
+                }
+
+                /* The Select pill button */
+                .button.secondary,
+                button.button.secondary {
+                    background-color: var(--color-primary) !important;
+                    color: var(--guardian-surface) !important;
+                    border: none !important;
+                    border-radius: var(--guardian-radius-full) !important;
+                    padding: 9px 22px !important;
+                    font-family: var(--guardian-font-sans);
+                    font-size: var(--guardian-font-size-xs);
+                    font-weight: var(--guardian-weight-semibold);
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    box-shadow: none;
+                    transition: box-shadow 0.2s var(--guardian-ease-smooth),
+                        transform 0.2s var(--guardian-ease-smooth);
+
+                    &:hover {
+                        background-color: var(--color-primary) !important;
+                        color: var(--guardian-surface) !important;
+                        box-shadow: 0 6px 18px rgba(26, 154, 122, 0.28);
+                        transform: translateY(-1px);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* ──────────────────── Filter toolbar ──────────────────── */
+.guardian-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--guardian-space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--guardian-space-4);
+
+    .p-inputtext {
+        min-width: 220px;
+        height: 40px;
+    }
+}
+
+/* ──────────────────── Content stage ──────────────────── */
+/*
+ * Applied to the top-level container of every rebranded page. Provides:
+ *  - generous breathing room on all sides (Linear/Stripe whitespace)
+ *  - smooth fade-up entry on premium easing
+ *  - a max content width so ultra-wide monitors do not stretch the rhythm
+ * Children can stagger-enter via .guardian-stagger > * or per-element delays.
+ */
+.guardian-stage {
+    position: relative;
+    animation: guardian-rise 520ms var(--guardian-ease-premium) both;
+    padding: 16px 56px 80px 56px !important;
+    max-width: 1440px;
+    margin: 0 auto !important;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+    .guardian-stage {
+        padding: 16px 40px 72px 40px !important;
+    }
+}
+
+@media (max-width: 720px) {
+    .guardian-stage {
+        padding: 12px 24px 56px 24px !important;
+    }
+}
+
+.guardian-stage__child {
+    animation: guardian-rise 520ms var(--guardian-ease-premium) both;
+    animation-delay: 60ms;
+}
+
+/*
+ * Stagger modifier — put on a grid parent to have direct children enter in
+ * sequence. Each child can also wear .guardian-stage__child if it needs
+ * a consistent timing when re-entering.
+ */
+.guardian-stagger > * {
+    animation: guardian-rise 520ms var(--guardian-ease-premium) both;
+}
+.guardian-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+}
+.guardian-stagger > *:nth-child(2) {
+    animation-delay: 70ms;
+}
+.guardian-stagger > *:nth-child(3) {
+    animation-delay: 140ms;
+}
+.guardian-stagger > *:nth-child(4) {
+    animation-delay: 210ms;
+}
+.guardian-stagger > *:nth-child(5) {
+    animation-delay: 280ms;
+}
+.guardian-stagger > *:nth-child(6) {
+    animation-delay: 350ms;
+}
+.guardian-stagger > *:nth-child(7) {
+    animation-delay: 420ms;
+}
+.guardian-stagger > *:nth-child(8) {
+    animation-delay: 490ms;
+}
+
+@keyframes guardian-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ──────────────── Empty state pattern ────────────────
+ * Used for "There are no X created yet" surfaces across the app. Matches the
+ * relayer-accounts visual: small muted icon, dark bold headline, lighter
+ * support text. Available on every page (not scoped to .guardian-page).
+ */
+.guardian-user-not-data {
+    color: var(--guardian-text, #1a1a1a);
+    font-family: var(--guardian-font-sans, Inter), sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 12px;
+    min-height: 320px;
+    padding: 64px 0;
+    width: 100%;
+
+    &__text-strong {
+        color: var(--guardian-text, #1a1a1a);
+        text-align: center;
+        font-family: var(--guardian-font-sans, Inter), sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.005em;
+    }
+
+    &__text {
+        color: var(--guardian-text-secondary, #6b7280);
+        text-align: center;
+        font-family: var(--guardian-font-sans, Inter), sans-serif;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+}

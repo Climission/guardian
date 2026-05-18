@@ -1,0 +1,202 @@
+/*
+ * Guardian feedback states — one spinner, one progress bar, one skeleton,
+ * one shared .loading wrapper. All timings and colours come from tokens so
+ * a single token change propagates everywhere.
+ *
+ * The system is a 3-tier loader strategy:
+ *   Tier 1 — action arc: inline in buttons, headers, micro-loads (14–22px).
+ *   Tier 2 — skeleton: table rows, card lists, anywhere the data shape can
+ *            be approximated while waiting.
+ *   Tier 3 — large ring: full-page / dialog waits where the spinner is the
+ *            main visual element (56px+).
+ *
+ * .preloader-image (no size) and -m-size resolve to Tier 1 (the arc).
+ * .preloader-image-l-size resolves to Tier 3.
+ */
+
+/* ──────────────────── Tier 1: action arc ──────────────────── */
+.preloader-image,
+.preloader-image-s-size,
+.preloader-image-m-size,
+.guardian-action-arc {
+    display: inline-block;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 2px solid var(--color-primary);
+    border-top-color: transparent;
+    border-right-color: transparent;
+    background: transparent;
+    vertical-align: middle;
+    animation: guardian-spin 0.7s linear infinite;
+    filter: none;
+}
+
+.preloader-image,
+.guardian-action-arc {
+    width: 18px;
+    height: 18px;
+}
+
+.preloader-image-s-size {
+    width: 14px;
+    height: 14px;
+    border-width: 1.75px;
+}
+
+.preloader-image-m-size {
+    width: 22px;
+    height: 22px;
+    border-width: 2px;
+}
+
+/* ──────────────────── Tier 3: large ring ──────────────────── */
+div.preloader-image.preloader-image-l-size {
+    width: 56px;
+    height: 56px;
+    border-width: 3px;
+}
+
+/* Inline spinner sitting next to button text. */
+.p-button .guardian-action-arc,
+.button .guardian-action-arc {
+    width: 14px;
+    height: 14px;
+    border-width: 1.75px;
+    border-color: currentColor;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    margin-right: 6px;
+}
+
+@keyframes guardian-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Legacy keyframe name kept alive for any stragglers still referencing it. */
+@keyframes preloaderRotationColored {
+    to { transform: rotate(360deg); }
+}
+
+/* ──────────────────── Shared .loading wrapper ──────────────────── */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    width: 100%;
+}
+
+.loading-shade {
+    position: absolute;
+    inset: 0;
+    background: rgba(249, 250, 252, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    backdrop-filter: blur(2px);
+}
+
+.loading-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--guardian-space-2);
+    color: var(--guardian-text-muted);
+    font-size: var(--guardian-font-size-sm);
+}
+
+/* ──────────────────── PrimeNG progress bar ──────────────────── */
+.p-progressbar {
+    height: 6px;
+    border-radius: var(--guardian-radius-full);
+    background: var(--guardian-muted);
+    overflow: hidden;
+}
+
+.p-progressbar .p-progressbar-value {
+    background: var(--guardian-shimmer);
+    background-size: 200% 100%;
+    animation: guardian-shimmer 2s ease-in-out infinite;
+    border-radius: var(--guardian-radius-full);
+    transition: width var(--guardian-duration) var(--guardian-ease);
+}
+
+.p-progressbar .p-progressbar-label {
+    color: var(--guardian-text);
+    font-weight: var(--guardian-weight-semibold);
+    font-size: var(--guardian-font-size-xs);
+}
+
+@keyframes guardian-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ──────────────────── PrimeNG indeterminate progress spinner ──────────────────── */
+.p-progress-spinner {
+    width: 24px;
+    height: 24px;
+}
+
+.p-progress-spinner .p-progress-spinner-svg {
+    animation: guardian-spin var(--guardian-spinner-duration) linear infinite;
+}
+
+.p-progress-spinner .p-progress-spinner-circle {
+    stroke: var(--guardian-primary) !important;
+    stroke-dasharray: 60 180 !important;
+    animation: none !important;
+}
+
+/* ──────────────────── Skeleton loader ──────────────────── */
+.guardian-skeleton {
+    display: block;
+    width: 100%;
+    height: 1em;
+    border-radius: var(--guardian-radius-sm);
+    background: linear-gradient(
+        90deg,
+        var(--guardian-muted) 0%,
+        var(--guardian-grey-3) 50%,
+        var(--guardian-muted) 100%
+    );
+    background-size: 200% 100%;
+    animation: guardian-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.guardian-skeleton-row {
+    height: var(--guardian-table-row-height);
+    margin-bottom: 2px;
+    border-radius: 0;
+}
+
+.guardian-skeleton-title {
+    height: 28px;
+    width: 40%;
+    margin-bottom: var(--guardian-space-2);
+}
+
+.guardian-skeleton-text {
+    height: 12px;
+    width: 100%;
+    margin-bottom: var(--guardian-space-1);
+}
+
+.guardian-skeleton-text.short {
+    width: 60%;
+}
+
+@keyframes guardian-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ──────────────────── Fade-in for content that just loaded ──────────────────── */
+.guardian-fade-in {
+    animation: guardian-fade-in var(--guardian-duration) var(--guardian-ease) both;
+}
+
+@keyframes guardian-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}

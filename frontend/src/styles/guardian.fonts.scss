@@ -1,0 +1,59 @@
+/*
+ * Guardian typography — token-driven sizing and weights for .mat-typography.
+ *
+ * Font family is not declared here so deployers can change it by editing
+ * --guardian-font-sans / --guardian-font-body in guardian-tokens.scss
+ * without touching this file. The existing Poppins / Inter / Lato Google
+ * Fonts loaded elsewhere in the project remain the defaults; replace those
+ * imports if your brand uses a different family.
+ */
+
+html, body {
+    font-family: var(--guardian-font-body);
+}
+
+code, pre, .mono {
+    font-family: var(--guardian-font-mono);
+}
+
+.mat-typography {
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-base);
+    font-weight: var(--guardian-weight-normal);
+}
+
+.mat-typography h1,
+.mat-typography h2,
+.mat-typography h3,
+.mat-typography h4 {
+    font-family: var(--guardian-font-sans) !important;
+    letter-spacing: var(--guardian-tracking-tight);
+    font-weight: var(--guardian-weight-bold);
+}
+
+.mat-typography h1 {
+    font-size: var(--guardian-font-size-3xl);
+}
+
+.mat-typography h2 {
+    font-size: var(--guardian-font-size-2xl);
+}
+
+.mat-typography h3 {
+    font-size: var(--guardian-font-size-xl);
+}
+
+.mat-typography h4 {
+    font-size: var(--guardian-font-size-md);
+    font-weight: var(--guardian-weight-semibold);
+}
+
+.mat-typography b,
+.mat-typography strong {
+    font-weight: var(--guardian-weight-semibold);
+}
+
+.mat-typography label {
+    font-size: var(--guardian-font-size-sm);
+    font-weight: var(--guardian-weight-medium);
+}

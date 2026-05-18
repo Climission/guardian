@@ -1,0 +1,103 @@
+/*
+ * Guardian alert banners — flat, on-brand, legible. Token-driven semantic
+ * colours so a deployer's brand palette propagates automatically.
+ */
+
+.banner-important,
+.banner-warning,
+.banner-low,
+.banner-info,
+.banner-star {
+    padding: 8px 16px;
+    font-weight: var(--guardian-weight-medium);
+    font-size: var(--guardian-font-size-sm);
+    letter-spacing: 0;
+
+    .icon-info {
+        visibility: visible !important;
+    }
+
+    a {
+        font-weight: var(--guardian-weight-semibold);
+        text-decoration: underline;
+    }
+}
+
+.banner-important {
+    background: var(--guardian-error-bg);
+    color: var(--guardian-error-fg);
+    border-left: 3px solid var(--guardian-error);
+
+    a {
+        color: var(--guardian-error-fg);
+    }
+}
+
+.banner-warning {
+    background: var(--guardian-warn-bg);
+    color: var(--guardian-warn-fg);
+    border-left: 3px solid var(--guardian-warn);
+
+    a {
+        color: var(--guardian-warn-fg);
+    }
+}
+
+.banner-low {
+    background: var(--guardian-success-bg);
+    color: var(--guardian-success-fg);
+    border-left: 3px solid var(--guardian-success);
+
+    a {
+        color: var(--guardian-success-fg);
+    }
+}
+
+.banner-info {
+    background: var(--guardian-info-bg);
+    color: var(--guardian-info-fg);
+    border-left: 3px solid var(--guardian-info);
+
+    a {
+        color: var(--guardian-info-fg);
+    }
+}
+
+.banner-star {
+    background: var(--guardian-secondary);
+    color: var(--guardian-secondary-fg);
+    border-left: 3px solid var(--guardian-primary);
+
+    a {
+        color: var(--guardian-primary-dark);
+    }
+
+    .icon-star {
+        visibility: visible !important;
+        color: var(--guardian-primary);
+    }
+}
+
+.banner-visible {
+    #main-content {
+        top: var(--global-banner-height) !important;
+    }
+
+    #navbar {
+        top: var(--global-banner-height) !important;
+    }
+
+    #remoteButton {
+        top: calc(var(--global-banner-height) + 80px) !important;
+    }
+}
+
+.banner-hidden {
+    #main-content {
+        top: 0 !important;
+    }
+
+    #navbar {
+        top: 0 !important;
+    }
+}

@@ -1,0 +1,147 @@
+/*
+ * Guardian dialogs — token-driven Material dialog and PrimeNG dialog
+ * treatments. Opt-in by adding `.guardian-dialog` (Material) or
+ * `.guardian-p-dialog` (PrimeNG) to the host. Existing dialogs in the app
+ * remain untouched until they adopt these classes.
+ */
+.guardian-dialog {
+    .mat-dialog-container {
+        padding: 32px;
+        border-radius: var(--guardian-radius-xl);
+        background: var(--guardian-surface);
+    }
+
+    .mat-dialog-title {
+        display: flex;
+        margin-bottom: 24px;
+        font-family: var(--guardian-font-sans);
+        letter-spacing: var(--guardian-tracking-tight);
+
+        .mat-icon-button {
+            margin-left: auto;
+            height: 24px;
+            width: 24px;
+            font-size: 24px;
+            line-height: 20px;
+        }
+
+        .h1,
+        h2,
+        h3 {
+            margin-bottom: 0;
+        }
+    }
+
+    .mat-dialog-content {
+        margin-bottom: 24px !important;
+        color: var(--guardian-text);
+    }
+
+    .mat-dialog-actions {
+        min-height: 32px !important;
+        margin: 0 !important;
+        padding: 20px 0 0 0 !important;
+        position: relative;
+
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -32px;
+            right: -32px;
+            border-top: 1px solid var(--guardian-border);
+        }
+    }
+
+    .content {
+        overflow: visible;
+    }
+
+    .description {
+        word-wrap: break-word;
+        padding: 0 0 16px 0;
+        color: var(--guardian-text-secondary);
+        font-weight: var(--guardian-weight-light);
+        line-height: 1.55;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .button.red,
+    .button.red:hover {
+        background-color: var(--guardian-error) !important;
+        color: var(--guardian-surface) !important;
+    }
+}
+
+.guardian-p-dialog.guardian-p-dialog-lite {
+    &.p-dialog {
+        padding: 16px;
+    }
+}
+
+.guardian-p-dialog {
+    &.p-dialog {
+        border-radius: var(--guardian-radius-xl);
+        background: var(--guardian-surface);
+        padding: 28px;
+        min-height: 10%;
+        gap: 24px;
+        box-shadow: var(--guardian-shadow-lg);
+    }
+    &.no-gap.p-dialog {
+        gap: 0;
+    }
+    .p-dialog-header {
+        padding: 0;
+        margin: 0;
+        font-family: var(--guardian-font-sans);
+        letter-spacing: var(--guardian-tracking-tight);
+        font-weight: var(--guardian-weight-semibold);
+    }
+
+    .p-dialog-content {
+        padding: 0;
+        margin: 0;
+        position: relative;
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--guardian-space-1);
+            label {
+                width: 100%;
+                font-size: var(--guardian-font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: var(--guardian-tracking-label);
+                font-weight: var(--guardian-weight-semibold);
+                color: var(--guardian-text-muted);
+            }
+            input {
+                width: 100%;
+            }
+        }
+        .guardian-dialog-actions {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: var(--guardian-space-3);
+        }
+    }
+
+    &.guardian-p-dialog-line::after {
+        content: "";
+        position: absolute;
+        bottom: 98px;
+        left: 0;
+        right: 0;
+        border-top: 1px solid var(--guardian-border);
+    }
+}

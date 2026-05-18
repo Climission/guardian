@@ -1,0 +1,375 @@
+/*
+ * Guardian PrimeNG overrides — token-driven theming for the PrimeNG
+ * components used across the app: inputs, dropdowns, multi-selects,
+ * checkboxes, buttons, tabs, tables, tree-tables, paginators, colour
+ * pickers. Hover/selection/sort indicators all key off --color-primary so
+ * a runtime brand override propagates without per-component edits.
+ *
+ * Notable: the "box in a box" fix removes the double border PrimeNG renders
+ * for nested .p-inputtext inside .p-dropdown / .p-multiselect.
+ */
+
+body {
+    --primary-color-80: rgb(from var(--primary-color) r g b / 0.8);
+    --primary-color-20: rgb(from var(--primary-color) r g b / 0.2);
+}
+
+/* ──────────────────── Inputs / dropdowns ──────────────────── */
+.p-inputtext,
+.p-dropdown,
+.p-multiselect {
+    border: 1px solid var(--guardian-border);
+    background: var(--guardian-surface);
+    color: var(--guardian-text);
+    border-radius: var(--guardian-radius-md);
+    transition: border-color var(--guardian-duration-fast) var(--guardian-ease),
+                box-shadow var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-inputtext:enabled:focus,
+.p-dropdown.p-focus,
+.p-multiselect.p-focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--guardian-shadow-focus-ring);
+    outline: none;
+}
+
+.p-dropdown:hover,
+.p-multiselect:hover,
+.p-inputtext:enabled:hover {
+    border-color: var(--guardian-border-strong);
+}
+
+/*
+ * Fix the "box in a box" — PrimeNG renders <p-dropdown> with its own
+ * border AND nests a .p-inputtext inside that ALSO has a border, giving
+ * a double-bordered look. Strip the inner one so the dropdown reads as
+ * a single rounded surface.
+ */
+.p-dropdown .p-inputtext,
+.p-dropdown .p-dropdown-label,
+.p-multiselect .p-multiselect-label {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--guardian-text);
+    font-family: var(--guardian-font-sans);
+    padding: 8px 12px;
+}
+
+.p-dropdown .p-dropdown-trigger,
+.p-multiselect .p-multiselect-trigger {
+    color: var(--guardian-text-muted);
+    transition: color var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-dropdown:hover .p-dropdown-trigger,
+.p-multiselect:hover .p-multiselect-trigger {
+    color: var(--color-primary);
+}
+
+/* Dropdown / MultiSelect panel (the popup with items) */
+.p-dropdown-panel,
+.p-multiselect-panel {
+    background: var(--guardian-surface);
+    border: 1px solid var(--guardian-border);
+    border-radius: var(--guardian-radius-md);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    margin-top: 6px;
+    overflow: hidden;
+    font-family: var(--guardian-font-sans);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+    color: var(--guardian-text);
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-base);
+    padding: 10px 14px;
+    transition: background var(--guardian-duration-fast) var(--guardian-ease),
+                color var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover,
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item:hover {
+    background: color-mix(in srgb, var(--color-primary) 8%, #fff);
+    color: var(--guardian-text);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight,
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+    background: color-mix(in srgb, var(--color-primary) 14%, #fff);
+    color: var(--color-primary);
+    font-weight: var(--guardian-weight-semibold);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight:hover {
+    background: color-mix(in srgb, var(--color-primary) 18%, #fff);
+}
+
+/* ──────────────────── Checkbox ──────────────────── */
+.p-checkbox .p-checkbox-box {
+    border: 1.5px solid var(--guardian-grey-4);
+    background: #fff;
+    border-radius: var(--guardian-radius-sm);
+    transition: border-color 180ms var(--guardian-ease-smooth),
+                background 180ms var(--guardian-ease-smooth),
+                box-shadow 180ms var(--guardian-ease-smooth);
+}
+
+.p-checkbox .p-checkbox-box:not(.p-disabled):not(.p-highlight):hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 6%, #fff);
+}
+
+.p-checkbox .p-checkbox-box.p-highlight,
+.p-checkbox .p-checkbox-box.p-highlight:not(.p-disabled):hover {
+    border-color: color-mix(in srgb, var(--color-primary) 80%, #000);
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-primary) 88%, #fff) 0%,
+        var(--color-primary) 50%,
+        color-mix(in srgb, var(--color-primary) 75%, #000) 100%
+    );
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--color-primary) 40%, #fff),
+        0 1px 3px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+    color: #fff;
+    font-size: 12px;
+    transition: transform 200ms var(--guardian-ease-smooth);
+}
+
+.p-checkbox .p-checkbox-box.p-focus,
+.p-checkbox .p-checkbox-box.p-highlight.p-focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+/* ──────────────────── Buttons ──────────────────── */
+.p-button {
+    border-radius: var(--guardian-radius-md);
+    font-family: var(--guardian-font-sans);
+    font-weight: var(--guardian-weight-medium);
+    letter-spacing: -0.005em;
+    transition:
+        background-color 220ms var(--guardian-ease-smooth),
+        color 220ms var(--guardian-ease-smooth),
+        border-color 220ms var(--guardian-ease-smooth),
+        box-shadow 220ms var(--guardian-ease-smooth),
+        transform 180ms var(--guardian-ease-smooth);
+}
+
+.p-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(65, 105, 226, 0.18);
+}
+
+.p-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+    transition-duration: 80ms;
+}
+
+.p-button:focus-visible {
+    box-shadow: var(--guardian-shadow-focus-ring);
+}
+
+.p-button.p-button-outlined {
+    background: var(--guardian-surface);
+    color: var(--guardian-text);
+    border-color: var(--guardian-border);
+}
+
+.p-button.p-button-outlined:hover {
+    background: var(--guardian-muted);
+    border-color: var(--guardian-border-strong);
+    color: var(--guardian-text);
+    box-shadow: 0 2px 10px rgba(23, 23, 23, 0.04);
+}
+
+/* ──────────────────── Tabs ──────────────────── */
+.p-tabview .p-tabview-nav {
+    border-bottom: 1px solid var(--guardian-border);
+    background: transparent;
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    color: var(--guardian-text-muted);
+    font-family: var(--guardian-font-sans);
+    font-weight: var(--guardian-weight-medium);
+    font-size: var(--guardian-font-size-base);
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    padding: 12px 20px;
+    margin-bottom: -1px;
+    transition: color 220ms var(--guardian-ease-smooth),
+                border-color 220ms var(--guardian-ease-smooth),
+                background 220ms var(--guardian-ease-smooth);
+    position: relative;
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link::before {
+    content: "";
+    position: absolute;
+    inset: 4px 8px;
+    border-radius: var(--guardian-radius-sm);
+    background: transparent;
+    transition: background 180ms var(--guardian-ease-smooth);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link:hover {
+    color: var(--guardian-text);
+    background: transparent;
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link:hover::before {
+    background: color-mix(in srgb, var(--color-primary) 6%, #fff);
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background: transparent;
+    border-bottom-color: var(--color-primary);
+    color: var(--color-primary);
+    font-weight: var(--guardian-weight-semibold);
+}
+
+/* ──────────────────── Dialog header close button focus ──────────────────── */
+.p-dialog .p-dialog-header .p-dialog-header-icon:focus-visible {
+    box-shadow: var(--guardian-shadow-focus-ring);
+}
+
+/* ──────────────────── Table — one consistent look across the app ──────────────────── */
+.p-datatable .p-datatable-thead > tr > th {
+    background: #fafbfd;
+    color: var(--guardian-text-muted);
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-xs);
+    font-weight: var(--guardian-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--guardian-tracking-label, 0.05em);
+    border-bottom: 1px solid var(--guardian-border);
+    padding: 14px 20px;
+    transition: background var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    transition: background-color 200ms var(--guardian-ease-smooth);
+    background: var(--guardian-surface);
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    border-bottom: 1px solid var(--guardian-border);
+    color: var(--guardian-text);
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-sm);
+    padding: 14px 16px;
+    transition: color var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-datatable .p-datatable-tbody > tr:hover,
+.p-datatable .p-datatable-tbody > tr.p-selectable-row:not(.p-highlight):hover {
+    background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight,
+.p-datatable .p-datatable-tbody > tr.p-selectable-row.p-highlight {
+    background: color-mix(in srgb, var(--color-primary) 10%, #fff);
+    color: var(--guardian-text);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight > td {
+    color: var(--guardian-text);
+    font-weight: var(--guardian-weight-medium);
+}
+
+.p-datatable .p-datatable-tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.p-datatable .p-sortable-column.p-highlight,
+.p-datatable .p-sortable-column:hover.p-highlight {
+    color: var(--color-primary);
+}
+
+.p-datatable .p-sortable-column .p-sortable-column-icon,
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: inherit;
+}
+
+/* ──────────────────── Tree-table (mirrors data-table styling) ──────────────────── */
+.p-treetable .p-treetable-thead > tr > th {
+    background: #fafbfd;
+    color: var(--guardian-text-muted);
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-xs);
+    font-weight: var(--guardian-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--guardian-tracking-label, 0.05em);
+    border-bottom: 1px solid var(--guardian-border);
+    padding: 14px 20px;
+}
+
+.p-treetable .p-treetable-tbody > tr {
+    transition: background-color 200ms var(--guardian-ease-smooth);
+    background: var(--guardian-surface);
+}
+
+.p-treetable .p-treetable-tbody > tr > td {
+    border-bottom: 1px solid var(--guardian-border);
+    color: var(--guardian-text);
+    font-family: var(--guardian-font-sans);
+    font-size: var(--guardian-font-size-sm);
+    padding: 14px 16px;
+    transition: color var(--guardian-duration-fast) var(--guardian-ease);
+}
+
+.p-treetable .p-treetable-tbody > tr:hover,
+.p-treetable .p-treetable-tbody > tr.p-treetable-row:not(.p-highlight):hover {
+    background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+}
+
+.p-treetable .p-treetable-tbody > tr.p-highlight {
+    background: color-mix(in srgb, var(--color-primary) 10%, #fff);
+    color: var(--guardian-text);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.p-treetable .p-treetable-tbody > tr.p-highlight > td {
+    color: var(--guardian-text);
+    font-weight: var(--guardian-weight-medium);
+}
+
+.p-treetable .p-treetable-tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.p-treetable .p-sortable-column.p-highlight,
+.p-treetable .p-sortable-column:hover.p-highlight {
+    color: var(--color-primary);
+}
+
+/* ──────────────────── Paginator ──────────────────── */
+.p-paginator {
+    background: #fbfaf8;
+    border-top: 1px solid var(--guardian-border);
+    color: var(--guardian-text-muted);
+    font-size: var(--guardian-font-size-sm);
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+    background: var(--guardian-primary);
+    color: var(--guardian-surface);
+    border-radius: var(--guardian-radius-sm);
+}
+
+/* ──────────────────── Color picker ──────────────────── */
+.p-colorpicker-preview {
+    border-radius: var(--guardian-radius-sm);
+    border: 1px solid var(--guardian-border);
+}

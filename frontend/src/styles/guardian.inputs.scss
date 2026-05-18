@@ -1,0 +1,49 @@
+/*
+ * Guardian form inputs — token-driven. Used inside any container scoped to
+ * .guardian (e.g. branded forms in the Branding settings preview or the
+ * tenant workspace). Components that opt-in by adding `.guardian` to their
+ * host get the polished input treatment automatically.
+ */
+.guardian {
+    .p-field-input {
+        border-radius: var(--guardian-radius-md);
+        border: 1px solid var(--guardian-border);
+        background: var(--guardian-surface);
+        outline: none !important;
+        box-shadow: unset !important;
+        padding: 10px 0 10px 14px;
+        align-items: center;
+        align-self: stretch;
+        transition: border-color var(--guardian-duration-fast) var(--guardian-ease),
+                    box-shadow var(--guardian-duration-fast) var(--guardian-ease);
+        box-sizing: border-box;
+        resize: vertical;
+
+        color: var(--guardian-text);
+        font-family: var(--guardian-font-sans);
+        font-size: var(--guardian-font-size-base);
+        font-style: normal;
+        font-weight: var(--guardian-weight-normal);
+        line-height: 1.35;
+        height: 40px;
+    }
+
+    .p-field-input:focus {
+        border-color: var(--guardian-primary);
+        box-shadow: var(--guardian-shadow-focus-ring) !important;
+    }
+
+    .p-field-input:hover:not(:focus) {
+        border-color: var(--guardian-border-strong);
+    }
+
+    .p-field-label {
+        display: block;
+        font-size: var(--guardian-font-size-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--guardian-tracking-label);
+        font-weight: var(--guardian-weight-semibold);
+        color: var(--guardian-text-muted);
+        margin-bottom: var(--guardian-space-2);
+    }
+}

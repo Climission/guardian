@@ -1,5 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./variables.scss";
+
+/*
+ * Guardian theming layer — token-driven design system. The token chain is:
+ *   styles/guardian-tokens.scss  ← single source of truth
+ *     imported by
+ *   variables.scss               ← aliases legacy --color-* names to tokens
+ *     used by
+ *   styles/guardian.{fonts,inputs,banner,dialog,feedback,prime,patterns}.scss
+ * See frontend/THEMING-GUIDE.md for the deployer workflow.
+ */
+@import "./styles/guardian.fonts.scss";
+@import "./styles/guardian.inputs.scss";
+@import "./styles/guardian.banner.scss";
+@import "./styles/guardian.dialog.scss";
+@import "./styles/guardian.feedback.scss";
+@import "./styles/guardian.prime.scss";
+@import "./styles/guardian.patterns.scss";
+
 @import "codemirror/lib/codemirror";
 @import "codemirror/theme/material";
 @import "codemirror/addon/fold/foldgutter.css";
