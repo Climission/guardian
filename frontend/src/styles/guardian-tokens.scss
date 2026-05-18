@@ -1,0 +1,144 @@
+/*
+ * Guardian design tokens — single source of truth for theming.
+ *
+ * Every UI value (colour, font, radius, spacing, timing, shadow, gradient) is
+ * declared here once as a `--guardian-*` CSS custom property. Component SCSS
+ * files reference these tokens instead of hard-coding values, so a deployer
+ * who wants to white-label Guardian under their own brand changes one file.
+ *
+ * `variables.scss` aliases legacy `--color-*`, `--primary-color`,
+ * `--linear-gradient` etc. onto these tokens for backwards compatibility, so
+ * every existing component keeps rendering identically without edits. The
+ * default values below resolve to the colours, fonts, and dimensions that
+ * Guardian shipped before this token layer existed — zero visual change.
+ *
+ * Runtime tenant branding overrides apply on top of these tokens via
+ * BrandingService (see app/services/branding.service.ts), which writes
+ * primary-colour and gradient values onto document.body.
+ *
+ * See frontend/THEMING-GUIDE.md for the full deployer workflow.
+ */
+
+:root {
+    /* ─────────────────── Brand colours ─────────────────── */
+    --guardian-primary: #4169e2;
+    --guardian-primary-hover: #476ff1;
+    --guardian-primary-dark: #2952c8;
+    --guardian-primary-bright: #6b8df0;
+
+    /* Surfaces */
+    --guardian-bg: #f9fafc;
+    --guardian-surface: #ffffff;
+    --guardian-muted: #eff3f7;
+
+    /* Text */
+    --guardian-text: #181818;
+    --guardian-text-secondary: #495057;
+    --guardian-text-muted: #848fa9;
+
+    /* Borders */
+    --guardian-border: #e1e7ef;
+    --guardian-border-strong: #b0b5ba;
+
+    /* ─────────────────── Grey scale ─────────────────── */
+    --guardian-grey-0: #ffffff;
+    --guardian-grey-1: #f9fafc;
+    --guardian-grey-2: #eff3f7;
+    --guardian-grey-3: #e1e7ef;
+    --guardian-grey-4: #b0b5ba;
+    --guardian-grey-5: #848fa9;
+    --guardian-grey-6: #495057;
+    --guardian-grey-7: #23252e;
+    --guardian-grey-8: #181818;
+    --guardian-grey-9: #000000;
+
+    /* ─────────────────── Semantic colours ─────────────────── */
+    --guardian-success: #19be47;
+    --guardian-success-bg: #b4ffc9;
+    --guardian-success-fg: #0a6b29;
+    --guardian-warn: #da9b22;
+    --guardian-warn-bg: #fff2d8;
+    --guardian-warn-fg: #92400e;
+    --guardian-error: #ff432a;
+    --guardian-error-bg: #f5d7d7;
+    --guardian-error-fg: #991b1b;
+    --guardian-info: #4169e2;
+    --guardian-info-bg: #cddDFd;
+    --guardian-info-fg: #1e3a8a;
+
+    /* ─────────────────── Secondary / accent ─────────────────── */
+    --guardian-secondary: #cddDFd;
+    --guardian-secondary-fg: #1e3a8a;
+
+    /* ─────────────────── Typography ─────────────────── */
+    --guardian-font-sans: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --guardian-font-body: 'Lato', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --guardian-font-mono: ui-monospace, Menlo, Consolas, monospace;
+
+    --guardian-font-size-xs: 11px;
+    --guardian-font-size-sm: 12.5px;
+    --guardian-font-size-base: 14px;
+    --guardian-font-size-md: 15px;
+    --guardian-font-size-lg: 17px;
+    --guardian-font-size-xl: 22px;
+    --guardian-font-size-2xl: 26px;
+    --guardian-font-size-3xl: 32px;
+
+    --guardian-weight-light: 300;
+    --guardian-weight-normal: 400;
+    --guardian-weight-medium: 500;
+    --guardian-weight-semibold: 600;
+    --guardian-weight-bold: 700;
+
+    --guardian-tracking-tight: -0.03em;
+    --guardian-tracking-normal: 0;
+    --guardian-tracking-wide: 0.1em;
+    --guardian-tracking-label: 0.12em;
+
+    /* ─────────────────── Radii ─────────────────── */
+    --guardian-radius-sm: 0.375rem;
+    --guardian-radius-md: 0.5rem;
+    --guardian-radius-lg: 0.625rem;
+    --guardian-radius-xl: 0.75rem;
+    --guardian-radius-full: 999px;
+
+    /* ─────────────────── Spacing ─────────────────── */
+    --guardian-space-1: 0.25rem;
+    --guardian-space-2: 0.5rem;
+    --guardian-space-3: 0.75rem;
+    --guardian-space-4: 1rem;
+    --guardian-space-5: 1.25rem;
+    --guardian-space-6: 1.5rem;
+    --guardian-space-8: 2rem;
+    --guardian-space-10: 2.5rem;
+    --guardian-space-12: 3rem;
+
+    /* ─────────────────── Timings & easing ─────────────────── */
+    --guardian-duration-fast: 0.15s;
+    --guardian-duration: 0.25s;
+    --guardian-duration-slow: 0.4s;
+    --guardian-ease: cubic-bezier(0.23, 1, 0.32, 1);
+    --guardian-ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    --guardian-ease-smooth: cubic-bezier(0.33, 1, 0.68, 1);
+    --guardian-spinner-duration: 1s;
+
+    /* ─────────────────── Shadows ─────────────────── */
+    --guardian-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --guardian-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --guardian-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --guardian-shadow-overlay: 0 20px 60px rgba(0, 0, 0, 0.2);
+    --guardian-shadow-focus-ring: 0 0 0 3px rgba(65, 105, 226, 0.16);
+
+    /* ─────────────────── Gradients ─────────────────── */
+    --guardian-gradient: linear-gradient(174deg, var(--guardian-primary) 4.61%, rgba(6, 129, 238, 0.43) 128.14%);
+    --guardian-text-gradient: linear-gradient(174deg, var(--guardian-primary-bright) 4.61%, var(--guardian-primary) 128.14%);
+    --guardian-shimmer: linear-gradient(90deg, var(--guardian-primary) 0%, var(--guardian-primary-bright) 50%, var(--guardian-primary) 100%);
+    --guardian-sidebar-gradient: linear-gradient(180deg, var(--guardian-primary-dark) 0%, var(--guardian-primary) 100%);
+
+    /* ─────────────────── Layout ─────────────────── */
+    --guardian-header-width-expand: 280px;
+    --guardian-header-width-collapse: 80px;
+    --guardian-container-margin: 56px 48px 56px 48px;
+    --guardian-table-row-height: 64px;
+    --guardian-global-banner-height: 48px;
+}
