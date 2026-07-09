@@ -1342,7 +1342,19 @@ export class PolicyComponentsUtils {
         const virtual = !!instance.dryRun;
         if (virtual) {
             const virtualUser = await DatabaseServer.getVirtualUser(instance.policyId, userId);
-            userFull = new VirtualUser(virtualUser || regUser, instance);
+            // `virtualUser.id` is the DryRun record's own id, not the real
+            // authenticated user's id. PolicyUser derives `.userId` from
+            // `arg.id`, and callers throughout the policy engine (e.g.
+            // GetActiveVirtualUser / allAvailableUsers, used to resolve who
+            // gets block-update websocket pushes) rely on `.userId` being
+            // the real user id to look up the per-session ActiveVirtualUser
+            // pointer. Override `id` here so the resulting PolicyUser
+            // carries the correct real userId instead of the virtual user's
+            // own row id.
+            userFull = new VirtualUser(
+                virtualUser ? { ...virtualUser, id: userId } : regUser,
+                instance
+            );
         } else {
             userFull = new PolicyUser(regUser, instance);
         }
@@ -1440,7 +1452,14 @@ export class PolicyComponentsUtils {
     ): Promise<PolicyUser> {
         const virtualUser = await DatabaseServer.getVirtualUser(instance.policyId, userId);
         if (virtualUser) {
-            const userFull = new VirtualUser(virtualUser, instance);
+            // See GetPolicyUserByName above: `virtualUser.id` is the DryRun
+            // record's own id, not the real user id. Override it so
+            // `.userId` correctly reflects the real authenticated user
+            // driving this dry-run session.
+            const userFull = new VirtualUser(
+                userId ? { ...virtualUser, id: userId } : virtualUser,
+                instance
+            );
             const group = await instance
                 .components
                 .databaseServer
