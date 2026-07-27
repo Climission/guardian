@@ -74,8 +74,8 @@ describe('CacheInterceptor header preservation (fastify)', () => {
     it('captures and replays download headers for a buffer body', async () => {
         const store = makeStore();
         const hdr = {
-            'Content-Disposition': 'attachment; filename=template.xlsx',
-            'Content-Type': 'application/zip',
+            'content-disposition': 'attachment; filename=template.xlsx',
+            'content-type': 'application/zip',
         };
         const applied = {};
         const sent = [];
@@ -91,12 +91,15 @@ describe('CacheInterceptor header preservation (fastify)', () => {
         await run(it, ctx, { handle: () => of(undefined) });
         const envelope = JSON.parse(store.sets[0].v);
         assert.equal(envelope.type, 'buffer');
-        assert.deepEqual(envelope.headers, hdr);
+        assert.deepEqual(envelope.headers, {
+            'Content-Disposition': hdr['content-disposition'],
+            'Content-Type': hdr['content-type'],
+        });
 
         delete res.getHeader;
         await run(it, ctx, { handle: () => of('fresh') });
-        assert.equal(applied['Content-Disposition'], hdr['Content-Disposition']);
-        assert.equal(applied['Content-Type'], hdr['Content-Type']);
+        assert.equal(applied['Content-Disposition'], hdr['content-disposition']);
+        assert.equal(applied['Content-Type'], hdr['content-type']);
         assert.ok(Buffer.isBuffer(sent[0]));
         assert.equal(sent[0].toString(), 'zipbytes');
     });
