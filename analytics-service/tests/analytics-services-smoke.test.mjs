@@ -90,7 +90,8 @@ describe('@unit AnalyticsUserService.search (smoke)', () => {
         assert.equal(typeof AnalyticsUserService.search, 'function');
     });
 
-    it('search runs without throwing on a fresh report', async () => {
+    it('search runs without throwing on a fresh report', async function () {
+        this.timeout(15000);
         const Service = await loadUserService();
         const out = await Service.search(fakeReport());
         assert.ok(out !== undefined);

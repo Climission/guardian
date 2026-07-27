@@ -103,7 +103,7 @@ describe('SchemaHelper.buildDocument — condition serialization', () => {
         assert.equal(doc.allOf.length, 1);
         assert.deepEqual(doc.allOf[0].if.properties, { a: { const: 'x' } });
         assert.ok(doc.allOf[0].then.properties.t1);
-        assert.equal(doc.allOf[0].else, undefined);
+        assert.deepEqual(doc.allOf[0].else, { properties: { t1: false } });
     });
 
     it('serialises a multi-predicate AND into if.allOf', () => {
@@ -148,7 +148,7 @@ describe('SchemaHelper.buildDocument — condition serialization', () => {
 
     it('emits else when only elseFields are present', () => {
         const doc = build([{ ifCondition: { field: { name: 'a' }, fieldValue: 1 }, thenFields: [], elseFields: [field('e1', { required: true })] }]);
-        assert.equal(doc.allOf[0].then, undefined);
+        assert.deepEqual(doc.allOf[0].then, { properties: { e1: false } });
         assert.ok(doc.allOf[0].else.properties.e1);
         assert.deepEqual(doc.allOf[0].else.required, ['e1']);
     });

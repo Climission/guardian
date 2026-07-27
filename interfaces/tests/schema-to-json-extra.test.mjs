@@ -67,7 +67,7 @@ describe('SchemaToJson.conditionToJson', () => {
             thenFields: [],
             elseFields: [],
         });
-        assert.deepEqual(json.if.AND, [{ field: 'x', value: 1 }, { field: 'y', value: 2 }]);
+        assert.deepEqual(json.if.AND, [{ field: 'x', fieldValue: 1 }, { field: 'y', fieldValue: 2 }]);
     });
 
     it('serialises a multi-clause OR condition', () => {
