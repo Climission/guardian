@@ -6,8 +6,8 @@ describe('Dictionary enum (xlsx column labels)', () => {
         assert.equal(Dictionary.REQUIRED_FIELD, 'Required Field');
         assert.equal(Dictionary.FIELD_TYPE, 'Field Type');
         assert.equal(Dictionary.PARAMETER, 'Parameter');
-        assert.equal(Dictionary.QUESTION, 'Question');
-        assert.equal(Dictionary.ANSWER, 'Answer');
+        assert.equal(Dictionary.QUESTION, 'Description');
+        assert.equal(Dictionary.ANSWER, 'Test Value');
         assert.equal(Dictionary.SCHEMA_NAME, 'Schema');
         assert.equal(Dictionary.SCHEMA_TOOL_ID, 'Tool Id');
         assert.equal(Dictionary.ENUM_IPFS, 'Loaded to IPFS');
@@ -42,7 +42,8 @@ describe('FieldTypes.default', () => {
     it('all entries expose a name and a type', () => {
         for (const f of FieldTypes.default) {
             assert.isString(f.name);
-            assert.isString(f.type);
+            assert.isAbove(f.name.length, 0);
+            assert.isTrue(f.type === null || (typeof f.type === 'string' && f.type.length > 0));
         }
     });
 

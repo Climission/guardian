@@ -172,7 +172,7 @@ describe('MeecoService', function () {
             await svc.signPresentationRequestToken('REQ-9', 'UNSIGNED');
             const submitCall = svc.meecoApi.calls.find(c => c[0] === 'submit');
             assert.equal(submitCall[1], 'REQ-9');
-            assert.ok(submitCall[2].startsWith('UNSIGNED.b64:'));
+            assert.equal(submitCall[2], 'UNSIGNED.AQID');
         });
     });
 

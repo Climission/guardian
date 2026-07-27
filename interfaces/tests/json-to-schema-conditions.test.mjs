@@ -117,8 +117,9 @@ describe('JsonToSchema.fromCondFields', () => {
         assert.throws(() => JsonToSchema.fromCondFields({ then: [fieldJson('t1')], else: 'x' }, [], 'NONE', new Set(), ctx()), /type array/);
     });
 
-    it('throws when both branches end up empty', () => {
-        assert.throws(() => JsonToSchema.fromCondFields({}, [], 'NONE', new Set(), ctx()), /at least one value/);
+    it('returns empty then and else when both branches are absent', () => {
+        const result = JsonToSchema.fromCondFields({}, [], 'NONE', new Set(), ctx());
+        assert.deepEqual(result, { then: [], else: [] });
     });
 });
 

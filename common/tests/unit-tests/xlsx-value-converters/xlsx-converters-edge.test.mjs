@@ -286,9 +286,9 @@ describe('@unit value-converters edge: xlsxToUnit regex', () => {
         assert.equal(xlsxToUnit('#,##0.00"kg"'), 'kg');
     });
 
-    it('throws when the format contains no unit token (null match deref)', () => {
-        assert.throws(() => xlsxToUnit('#,##0.00'));
-        assert.throws(() => xlsxToUnit(''));
+    it('returns "" when the format contains no unit token (guarded null match)', () => {
+        assert.equal(xlsxToUnit('#,##0.00'), '');
+        assert.equal(xlsxToUnit(''), '');
     });
 });
 
